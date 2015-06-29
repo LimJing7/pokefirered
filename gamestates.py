@@ -37,6 +37,7 @@ def change_state(currState):
     if nextState == STATE_MAIN: currState = MainState()
     elif nextState == STATE_BATTLE: currState = BattleState()
     elif nextState == STATE_QUIT:
+        nextState = STATE_NULL
         return -1
     
     nextState = STATE_NULL
