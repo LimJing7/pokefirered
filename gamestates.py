@@ -17,6 +17,9 @@ STATE_NULL = 0
 STATE_QUIT = 1
 STATE_MAIN = 2
 STATE_BATTLE = 3
+STATE_INTRO = 4
+STATE_LOAD = 5
+STATE_NEW = 6
 
 nextState = STATE_NULL
 
@@ -103,7 +106,6 @@ class MainState(GameState):
         self.playerSprite.update()
     
     def render(self, screen):
-        print 'hello'
         #screen.blit(background, self.myMap.rect, self.myMap.rect)
         self.mapSprite.draw(screen)
         self.playerSprite.draw(screen)
@@ -123,6 +125,25 @@ class IntroState(GameState):
     """
     
     def __init__(self, screen, video):
+        self.cont=True
         self.movie = pygame.movie.Movie(video)
         videoplayer.play_vid(video)
         nextState = STATE_MAIN
+    
+    def handleEvents(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                set_next_state(STATE_QUIT)
+        pressed = pygame.key.get_pressed()
+        if pressed[K_UP] or pressed[K_DOWN]: self.cont = not self.cont
+        elif pressed[K_RETURN]:
+            if self.cont:
+                nextState = STATE_LOAD
+            else:
+                nextState = STATE_NEW
+    
+    def update(self):
+        return
+    
+    def render(self, screen):
+        return
