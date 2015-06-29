@@ -21,7 +21,8 @@ def main():
     background = pygame.Surface(screen.get_size()).convert()
     background.fill(BG_COLOR)
     
-    currentState = gamestates.MainState(screen)
+    # currentState = gamestates.MainState(screen)
+    currentState = gamestates.IntroState(screen, 'resources/Intro.mp4')
 
     clock = pygame.time.Clock()
 
@@ -29,7 +30,7 @@ def main():
         clock.tick(60)
         currentState.handleEvents()
         currentState.update()
-        if gamestates.change_state(currentState) == -1:
+        if gamestates.change_state(currentState, screen) == -1:
             return
         currentState.render(screen)
         

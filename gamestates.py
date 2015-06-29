@@ -5,6 +5,7 @@ try:
     import getopt
     import pygame
     import objects
+    import videoplayer
     from utilities import *
     from pygame.locals import *
 except ImportError, err:
@@ -24,7 +25,7 @@ def set_next_state(newState):
     if nextState != STATE_QUIT:
         nextState = newState
         
-def change_state(currState):
+def change_state(currState, screen):
     """
     Changes the gamestate if necessary
     
@@ -34,7 +35,7 @@ def change_state(currState):
     if nextState == STATE_NULL:
         return 0
     currState.close()
-    if nextState == STATE_MAIN: currState = MainState()
+    if nextState == STATE_MAIN: currState = MainState(screen)
     elif nextState == STATE_BATTLE: currState = BattleState()
     elif nextState == STATE_QUIT:
         nextState = STATE_NULL
@@ -62,7 +63,7 @@ class GameState:
     def update(self):
         return
     
-    def render(self):
+    def render(self, screen):
         return
        
     def setNewState(self, newState):
@@ -102,6 +103,7 @@ class MainState(GameState):
         self.playerSprite.update()
     
     def render(self, screen):
+        print 'hello'
         #screen.blit(background, self.myMap.rect, self.myMap.rect)
         self.mapSprite.draw(screen)
         self.playerSprite.draw(screen)
@@ -112,3 +114,15 @@ class MainState(GameState):
 class BattleState(GameState):
     def __init__(self):
         return
+        
+class IntroState(GameState):
+    """
+    IntroState class
+    
+    Game state for showing introduction and choosing to continue or start new game
+    """
+    
+    def __init__(self, screen, video):
+        self.movie = pygame.movie.Movie(video)
+        videoplayer.play_vid(video)
+        nextState = STATE_MAIN
