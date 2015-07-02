@@ -35,23 +35,22 @@ def change_state(currState, screen):
     
     Returns -1 if the game is to close, otherwise return 0
     """
-    newState = currState
     global nextState
     #print("Next state is {0}".format(nextState))
     if nextState == STATE_NULL:
-        return newState
+        return currState
     currState.close()
     
     
-    if nextState == STATE_MAIN: newState = MainState(screen)
-    elif nextState == STATE_BATTLE: newState = BattleState()
-    elif nextState == STATE_NEW: newState = NewState()    
+    if nextState == STATE_MAIN: currState = MainState(screen)
+    elif nextState == STATE_BATTLE: currState = BattleState()
+    elif nextState == STATE_NEW: currState = NewState()    
     elif nextState == STATE_QUIT:
         print("quitting")
-        newState = None
+        currState = None
 
     nextState = STATE_NULL
-    return newState
+    return currState
     
 class GameState:
     """
