@@ -35,11 +35,13 @@ def change_state(currState, screen):
     Returns -1 if the game is to close, otherwise return 0
     """
     global nextState
+    print nextState
     if nextState == STATE_NULL:
         return 0
     currState.close()
     if nextState == STATE_MAIN: currState = MainState(screen)
     elif nextState == STATE_BATTLE: currState = BattleState()
+    elif nextState == STATE_NEW: currState = NewState()    
     elif nextState == STATE_QUIT:
         nextState = STATE_NULL
         return -1
@@ -82,6 +84,7 @@ class MainState(GameState):
     Game state for the main map (walking around)
     """
     def __init__(self, screen):
+        print 'hi'
         self.mapData = [[1,2,3,4,3,2,1],[2,3,4,1,4,3,2],[3,4,1,2,1,4,3],[4,1,2,3,2,1,4],
                         [3,4,1,2,1,4,3],[2,3,4,1,4,3,2],[1,2,3,4,3,2,1]]
         self.viewSize = [5,5]
@@ -116,7 +119,23 @@ class MainState(GameState):
 class BattleState(GameState):
     def __init__(self):
         return
-        
+
+class NewState(GameState):
+    """
+    NewState class
+    
+    Game state for creation of new game
+    """
+    def __init__(self):
+        print 'new'
+    
+    def update(self):
+        global nextState
+        nextState = STATE_MAIN
+    
+    def close(self):
+        return
+
 class IntroState(GameState):
     """
     IntroState class
@@ -128,9 +147,12 @@ class IntroState(GameState):
         self.cont=True
         self.movie = pygame.movie.Movie(video)
         videoplayer.play_vid(video)
-        nextState = STATE_MAIN
+        global nextState
+        nextState = STATE_NEW
+        print nextState
     
     def handleEvents(self):
+        global nextState
         for event in pygame.event.get():
             if event.type == QUIT:
                 set_next_state(STATE_QUIT)
@@ -141,9 +163,13 @@ class IntroState(GameState):
                 nextState = STATE_LOAD
             else:
                 nextState = STATE_NEW
+        nextState = STATE_NEW
     
     def update(self):
         return
     
     def render(self, screen):
+        return
+        
+    def close(self):
         return
