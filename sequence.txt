@@ -1,0 +1,5 @@
+1. start IntroState
+2. load vs new
+if new:
+3. start NewState (create player)
+4. start MainState
