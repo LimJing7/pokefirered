@@ -268,6 +268,12 @@ class Player(pygame.sprite.Sprite):
         self.tl = (self.areaMap.viewSize[0]/2, self.areaMap.viewSize[1]/2)
         self.br = (self.areaMap.dimensions[0]-self.tl[0]-1,
                    self.areaMap.dimensions[1]-self.tl[1]-1)
+                   
+        #player's bag
+        self.pokeCount = 0
+        self.poke = []
+        
+        
 
     def makeMove(self, direction, frames = 10.0):
 

@@ -116,7 +116,11 @@ class MainState(GameState):
         return
         
 class BattleState(GameState):
-    def __init__(self):
+    def __init__(self, battleObject):
+        self.background = battleObject.background
+        self.enemyCount = battleObject.count
+        self.enemy = battleObject.first
+        self.selfCount = <sth>
         return
 
 class NewState(GameState):
