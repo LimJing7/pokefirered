@@ -13,9 +13,12 @@ except ImportError, err:
     pygame.quit()
     sys.exit(1)
     
+SCREEN_WIDTH=800
+SCREEN_HEIGHT=600
+
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Cats")
     
     background = pygame.Surface(screen.get_size()).convert()
