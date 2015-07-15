@@ -34,10 +34,10 @@ def main():
         currentState.handleEvents()
         currentState.update()
         
-        currentState = gamestates.change_state(currentState, screen)
+        currentState = gamestates.change_state(currentState)
         if currentState == None:
             return
-        currentState.render(screen)
+        currentState.render()
         
         pygame.display.flip()
 
