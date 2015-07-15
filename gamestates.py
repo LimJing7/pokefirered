@@ -9,6 +9,7 @@ try:
     import videoplayer
     from utilities import *
     from pygame.locals import *
+
 except ImportError, err:
     print "Could not load module", err
     pygame.quit()
@@ -24,6 +25,7 @@ STATE_NEW = 6
 
 nextState = STATE_NULL
 nextStateObject = None
+screenSize = []
 
 def set_next_state(newState, stateObject = None):
     global nextState
@@ -76,7 +78,7 @@ class GameState:
     def update(self):
         return
     
-    def render(self, screen):
+    def render(self):
         return
         
     def close(self):
@@ -89,27 +91,30 @@ class MainState(GameState):
     Game state for the main map (walking around)
     """
     def __init__(self, mainStateObject):
-        #blah
-        return
+        self.screen = mainStateObject.screen
+        self.player = mainStateObject.player
+        self.map = mainStateObject.map
+        self.mapSprite = pygame.sprite.RenderPlain(self.map)
+        self.playerSprite = pygame.sprite.RenderPlain(self.player)
         
     def handleEvents(self):
         for event in pygame.event.get():
             if event.type == QUIT:
                 set_next_state(STATE_QUIT)
         pressed = pygame.key.get_pressed()
-        if pressed[K_UP]: self.myPlayer.makeMove('u')
-        elif pressed[K_DOWN]: self.myPlayer.makeMove('d')
-        elif pressed[K_LEFT]: self.myPlayer.makeMove('l')
-        elif pressed[K_RIGHT]: self.myPlayer.makeMove('r')
+        if pressed[K_UP]: self.player.makeMove('u')
+        elif pressed[K_DOWN]: self.player.makeMove('d')
+        elif pressed[K_LEFT]: self.player.makeMove('l')
+        elif pressed[K_RIGHT]: self.player.makeMove('r')
             
     def update(self):
         self.mapSprite.update()
         self.playerSprite.update()
     
-    def render(self, screen):
+    def render(self):
         #screen.blit(background, self.myMap.rect, self.myMap.rect)
-        self.mapSprite.draw(screen)
-        self.playerSprite.draw(screen)
+        self.mapSprite.draw(self.screen)
+        self.playerSprite.draw(self.screen)
         
     def close(self):
         return
@@ -118,11 +123,12 @@ class BattleState(GameState):
     def __init__(self, battleObject):
         self.background = battleObject.background
         self.enemyCount = battleObject.count
-        self.enemy = battleObject.pokemon_list[0]
-        self.selfCount = #<sth>
+        self.enemy = battleObject.pokemon_list
+        self.screen = battleObject.screen
+        #self.selfCount = #<sth>
         
     def update(self):
-        screen.blit(self.background,,) #todo
+        self.screen.blit(self.background,self.screen.get_rect()) #todo
 
 class NewState(GameState):
     """
@@ -143,7 +149,7 @@ class NewState(GameState):
         self.player = objects.Player([3,3], self.myMap)
         self.mapSprite = pygame.sprite.RenderPlain(self.myMap)
         self.playerSprite = pygame.sprite.RenderPlain(self.player)
-        mainStateObject = gamestateobjects.mainStateObject(self.screen, self.myMap, self.player)
+        mainStateObject = gamestateobjects.MainStateObject(self.screen, self.myMap, self.player)
         set_next_state(STATE_MAIN, mainStateObject)
     
     def close(self):
@@ -157,29 +163,45 @@ class IntroState(GameState):
     """
     
     def __init__(self, screen, video):
+        global screenSize
         self.cont=True
         self.movie = pygame.movie.Movie(video)
+        self.screen = screen
+        screenSize = [self.screen.get_rect()[2], self.screen.get_rect()[3]]
         videoplayer.play_vid(video)
-        set_next_state(STATE_NEW)
+        self.screen.fill((48, 64, 84))
+        if pygame.font:
+            font = pygame.font.Font(None, 36)
+            self.newButton = objects.Button(screenSize[0]*0.2,screenSize[1]*0.8-10,screenSize[0]*0.6,screenSize[1]*0.2, 'New', False)
+            self.loadButton = objects.Button(screenSize[0]*0.2,10 ,screenSize[0]*0.6,screenSize[1]*0.8-30, 'Load', True)
+            self.newButtonSprite = pygame.sprite.RenderPlain(self.newButton)
+            self.loadButtonSprite = pygame.sprite.RenderPlain(self.loadButton)
     
     def handleEvents(self):
         for event in pygame.event.get():
             if event.type == QUIT:
                 set_next_state(STATE_QUIT)
         pressed = pygame.key.get_pressed()
-        if pressed[K_UP] or pressed[K_DOWN]: self.cont = not self.cont
+        if pressed[K_UP] or pressed[K_DOWN]:
+            self.cont = not self.cont
+            self.newButton.flip_select()
+            self.loadButton.flip_select()
         elif pressed[K_RETURN]:
             if self.cont:
                 set_next_state(STATE_LOAD)
             else:
-                newStateObject = gamestateobjects.NewStateObject(screen)
+                newStateObject = gamestateobjects.NewStateObject(self.screen)
+                print newStateObject
                 set_next_state(STATE_NEW, newStateObject)
     
     def update(self):
-        return
+        self.newButtonSprite.update()
+        self.loadButtonSprite.update()
     
-    def render(self, screen):
-        return
+    def render(self):
+        self.newButtonSprite.draw(self.screen)
+        self.loadButtonSprite.draw(self.screen)
+        # return
         
     def close(self):
         return
