@@ -400,3 +400,50 @@ class Player(pygame.sprite.Sprite):
         print "waitCount:", self.waitCount
         print "rect:", self.rect
         print "-----------------------------------"
+
+class Button(pygame.sprite.Sprite):
+    """
+    A class to consolidate all the button attributes
+    
+    x,y: position of top left corner of button
+    w,h: width and height of button
+    text: text to displayed
+    selected: boolean saying the button starts selected or not
+    """
+    
+    def __init__(self, x, y, w, h, text, selected):
+        pygame.sprite.Sprite.__init__(self)
+        self.text = text
+        self.selected = selected
+        self.color_list = [(216, 228, 228), (92, 96, 96)]
+        self.text_color_list = [(56, 56, 56),(44, 44, 44)]
+        if self.selected:
+            self.color = 0
+        else:
+            self.color = 1
+        self.image = pygame.Surface([w,h])
+        self.image.fill(self.color_list[self.color])
+        self.rect = pygame.Rect(x,y,w,h)
+        self.waitCount = 0
+        
+        self.buttonState = 'still'
+        
+    def flip_select(self):
+        if self.buttonState == 'still':
+            self.selected = not self.selected
+            self.buttonState = 'flip'
+    
+    def update(self):
+        if self.buttonState == 'flip':
+            self.color = (self.color+1)%2
+            self.image.fill(self.color_list[self.color])
+            self.buttonState = 'wait'
+            self.waitCount = 5
+            
+        if self.buttonState == 'wait':
+            # do absolutely nothing for a few frames
+            if self.waitCount > 1:
+                self.waitCount -= 1
+            else:
+                self.waitCount = 0
+                self.buttonState = "still"
