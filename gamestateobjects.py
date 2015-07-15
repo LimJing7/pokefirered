@@ -24,7 +24,7 @@ class GameStateObject:
     def __init__(self):
         return
 
-class NewStateObect(GameStateObject):
+class NewStateObject(GameStateObject):
     """
     NewStateObject class
     
@@ -34,6 +34,9 @@ class NewStateObect(GameStateObject):
     """
     def __init__(self, screen):
         self.screen = screen
+    
+    def __repr__(self):
+        return "NewStateObject"
 
 class MainStateObject(GameStateObject):
     """
@@ -54,6 +57,9 @@ class MainStateObject(GameStateObject):
         self.map = map
         self.player = player
         
+    def __repr__(self):
+        return "MainStateObject"
+        
 class BattleStateObject(GameStateObject):
     """
     BattleStateObject class
@@ -71,3 +77,6 @@ class BattleStateObject(GameStateObject):
         self.count=count
         self.pokemon_list=pokemon_list
         self.background=background
+    
+    def __repr__(self):
+        return "BattleStateObject"
