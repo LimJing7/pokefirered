@@ -10,7 +10,8 @@ except ImportError, err:
     print "Could not load module", err
     pygame.quit()
     sys.exit(1)
-
+    
+    
 class AreaMap(pygame.sprite.Sprite):
     # TODO: Animated tiles?? Might not happen.
     # Make it actually read from files.
@@ -413,6 +414,7 @@ class Button(pygame.sprite.Sprite):
     
     def __init__(self, x, y, w, h, text, selected):
         pygame.sprite.Sprite.__init__(self)
+        self.font = pygame.font.Font(None, 20)
         self.text = text
         self.selected = selected
         self.color_list = [(216, 228, 228), (92, 96, 96)]
@@ -423,6 +425,8 @@ class Button(pygame.sprite.Sprite):
             self.color = 1
         self.image = pygame.Surface([w,h])
         self.image.fill(self.color_list[self.color])
+        self.textSurf = self.font.render(self.text, 1, self.text_color_list[self.color])
+        self.image.blit(self.textSurf, (10, 10))
         self.rect = pygame.Rect(x,y,w,h)
         self.waitCount = 0
         
@@ -437,6 +441,8 @@ class Button(pygame.sprite.Sprite):
         if self.buttonState == 'flip':
             self.color = (self.color+1)%2
             self.image.fill(self.color_list[self.color])
+            self.textSurf = self.font.render(self.text, 1, self.text_color_list[self.color])
+            self.image.blit(self.textSurf, (10, 10))
             self.buttonState = 'wait'
             self.waitCount = 5
             

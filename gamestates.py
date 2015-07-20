@@ -106,6 +106,7 @@ class MainState(GameState):
         elif pressed[K_DOWN]: self.player.makeMove('d')
         elif pressed[K_LEFT]: self.player.makeMove('l')
         elif pressed[K_RIGHT]: self.player.makeMove('r')
+        elif pressed[K_ESCAPE]: set_next_state(STATE_QUIT)
             
     def update(self):
         self.mapSprite.update()
