@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
+
 try:
     import sys
     import random
     import math
     import getopt
+    import time
     import pygame
     import objects
+    import content
     import gamestateobjects
     import videoplayer
     from utilities import *
@@ -139,9 +143,54 @@ class NewState(GameState):
     """
     def __init__(self, newStateObject):
         self.screen = newStateObject.screen
-        print 'new'
+        self.screen.fill((48, 64, 84))
+        self.text = content.new
+        self.show = True
+        self.wait = True
+        self.line = 0
+        self.gender = 'M'
+        self.arrow = [u'\u25ba', u'\n\u25ba']
+        self.maintext = objects.Button(screenSize[0]*0.1,screenSize[1]*0.8-10,screenSize[0]*0.8,screenSize[1]*0.2, self.text[self.line], True)
+        self.maintextSprite = pygame.sprite.RenderPlain(self.maintext)
+        self.sidetextSprite = None
+        self.sideiconSprite = None
+        
+    
+    def handleEvents(self):
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                set_next_state(STATE_QUIT)
+        pressed = pygame.key.get_pressed()
+        if pressed[K_ESCAPE]: set_next_state(STATE_QUIT)
+        if self.line == 19 and pressed[K_RETURN]:
+            set_next_state(STATE_MAIN, self.mainStateObject)
+        elif pressed[K_RETURN]:
+            self.line += 1
+            self.maintext = objects.Button(screenSize[0]*0.1,screenSize[1]*0.8-10,screenSize[0]*0.8,screenSize[1]*0.2, self.text[self.line], True)
+            self.maintextSprite = pygame.sprite.RenderPlain(self.maintext)
+            self.wait = True
+        if self.line == 10:
+            if pressed[K_UP] or pressed[K_DOWN]:
+                self.wait = True
+                if self.gender == 'M':
+                    self.gender = 'F'
+                else:
+                    self.gender = 'M'
+            
     
     def update(self):
+        if self.line == 10:
+            self.sidetext = objects.Button(screenSize[0]*0.6-10,screenSize[1]*0.65-20,screenSize[0]*0.2,screenSize[1]*0.15, "BOY\nGIRL", True)
+            self.sidetextSprite = pygame.sprite.RenderPlain(self.sidetext)
+            if self.gender == 'M':
+                self.sideicon = objects.Button(screenSize[0]*0.6-50,screenSize[1]*0.65-20,40,screenSize[1]*0.15, self.arrow[0], True)
+                self.sideiconSprite = pygame.sprite.RenderPlain(self.sideicon)
+            else:
+                self.sideicon = objects.Button(screenSize[0]*0.6-50,screenSize[1]*0.65-20,40,screenSize[1]*0.15, self.arrow[1], True)
+                self.sideiconSprite = pygame.sprite.RenderPlain(self.sideicon)
+    
+    
+    
         self.mapData = [[1,2,3,4,3,2,1],[2,3,4,1,4,3,2],[3,4,1,2,1,4,3],[4,1,2,3,2,1,4],
                         [3,4,1,2,1,4,3],[2,3,4,1,4,3,2],[1,2,3,4,3,2,1]]
         self.viewSize = [5,5]
@@ -151,7 +200,15 @@ class NewState(GameState):
         self.mapSprite = pygame.sprite.RenderPlain(self.myMap)
         self.playerSprite = pygame.sprite.RenderPlain(self.player)
         mainStateObject = gamestateobjects.MainStateObject(self.screen, self.myMap, self.player)
-        set_next_state(STATE_MAIN, mainStateObject)
+        # set_next_state(STATE_MAIN, mainStateObject)
+    
+    def render(self):
+        self.maintextSprite.draw(self.screen)
+        if self.sidetextSprite is not None: self.sidetextSprite.draw(self.screen)
+        if self.sideiconSprite is not None: self.sideiconSprite.draw(self.screen)
+        if self.wait:
+            time.sleep(0.2)
+            self.wait = False
     
     def close(self):
         return
@@ -171,12 +228,10 @@ class IntroState(GameState):
         screenSize = [self.screen.get_rect()[2], self.screen.get_rect()[3]]
         videoplayer.play_vid(video)
         self.screen.fill((48, 64, 84))
-        if pygame.font:
-            font = pygame.font.Font(None, 36)
-            self.newButton = objects.Button(screenSize[0]*0.2,screenSize[1]*0.8-10,screenSize[0]*0.6,screenSize[1]*0.2, 'New', False)
-            self.loadButton = objects.Button(screenSize[0]*0.2,10 ,screenSize[0]*0.6,screenSize[1]*0.8-30, 'Load', True)
-            self.newButtonSprite = pygame.sprite.RenderPlain(self.newButton)
-            self.loadButtonSprite = pygame.sprite.RenderPlain(self.loadButton)
+        self.newButton = objects.Button(screenSize[0]*0.2,screenSize[1]*0.8-10,screenSize[0]*0.6,screenSize[1]*0.2, 'New', False)
+        self.loadButton = objects.Button(screenSize[0]*0.2,10 ,screenSize[0]*0.6,screenSize[1]*0.8-30, 'Load', True)
+        self.newButtonSprite = pygame.sprite.RenderPlain(self.newButton)
+        self.loadButtonSprite = pygame.sprite.RenderPlain(self.loadButton)
     
     def handleEvents(self):
         for event in pygame.event.get():
@@ -194,6 +249,7 @@ class IntroState(GameState):
                 newStateObject = gamestateobjects.NewStateObject(self.screen)
                 print newStateObject
                 set_next_state(STATE_NEW, newStateObject)
+        elif pressed[K_ESCAPE]: set_next_state(STATE_QUIT)
     
     def update(self):
         self.newButtonSprite.update()

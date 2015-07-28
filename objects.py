@@ -414,8 +414,10 @@ class Button(pygame.sprite.Sprite):
     
     def __init__(self, x, y, w, h, text, selected):
         pygame.sprite.Sprite.__init__(self)
-        self.font = pygame.font.Font(None, 20)
-        self.text = text
+        # self.font = pygame.font.Font(None, 30)
+        self.font = pygame.font.SysFont('Lucida Sans',30)
+        self.height = self.font.get_height()
+        self.text=text.split('\n')
         self.selected = selected
         self.color_list = [(216, 228, 228), (92, 96, 96)]
         self.text_color_list = [(56, 56, 56),(44, 44, 44)]
@@ -425,8 +427,9 @@ class Button(pygame.sprite.Sprite):
             self.color = 1
         self.image = pygame.Surface([w,h])
         self.image.fill(self.color_list[self.color])
-        self.textSurf = self.font.render(self.text, 1, self.text_color_list[self.color])
-        self.image.blit(self.textSurf, (10, 10))
+        for i in range(len(self.text)):
+            self.textSurf = self.font.render(self.text[i], 1, self.text_color_list[self.color])
+            self.image.blit(self.textSurf, (10, 10+i*self.height))
         self.rect = pygame.Rect(x,y,w,h)
         self.waitCount = 0
         
@@ -441,8 +444,9 @@ class Button(pygame.sprite.Sprite):
         if self.buttonState == 'flip':
             self.color = (self.color+1)%2
             self.image.fill(self.color_list[self.color])
-            self.textSurf = self.font.render(self.text, 1, self.text_color_list[self.color])
-            self.image.blit(self.textSurf, (10, 10))
+            for i in range(len(self.text)):
+                self.textSurf = self.font.render(self.text[i], 1, self.text_color_list[self.color])
+                self.image.blit(self.textSurf, (10, 10+i*self.height))
             self.buttonState = 'wait'
             self.waitCount = 5
             
